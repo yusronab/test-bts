@@ -4,6 +4,7 @@ import { Card, CardBody, Typography, CardFooter } from "@material-tailwind/react
 import NoteCreate from "../components/NoteCreate";
 import ItemCreate from "../components/ItemCreate";
 import DeleteNote from "../components/DeleteNote";
+import ItemDelete from "../components/ItemDelete";
 
 const Home = () => {
     const [notes, setNotes] = useState([]);
@@ -40,9 +41,19 @@ const Home = () => {
                                 </Typography>
                                 <Typography className="my-2">Checklist item:</Typography>
                                 {note.items !== null && note.items.map((item: any, j: number) => (
-                                    <Typography key={j}>
-                                        {j+1}. {item.name}
-                                    </Typography>
+                                    <div className="flex justify-between items-center" key={j}>
+                                        <Typography key={j}>
+                                            {j + 1}. {item.name}
+                                        </Typography>
+                                        <div>
+                                            <ItemDelete
+                                                itemId={item.id}
+                                                noteId={note.id}
+                                                noteName={note.name}
+                                                revalidate={fetchNotes}
+                                            />
+                                        </div>
+                                    </div>
                                 ))}
                             </CardBody>
                             <CardFooter className="mt-auto flex gap-4">

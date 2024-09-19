@@ -72,3 +72,17 @@ export const addChecklistItem = async (id: number, name: string) => {
 
     return result
 }
+
+export const deleteItem = async (id: number, itemId: number) => {
+    const token = isAuthorize();
+
+    if (!token) return;
+
+    const result = await axios.delete(BASE_URL + '/checklist/' + id + '/item/' + itemId, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return result
+}
