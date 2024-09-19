@@ -1,8 +1,9 @@
 import { useState, SyntheticEvent } from "react";
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
-import { createNote } from "../utils/service";
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, IconButton } from "@material-tailwind/react";
+import { addChecklistItem } from "../utils/service";
+import { FaRegPlusSquare } from "react-icons/fa";
 
-const ItemCreate = ({ revalidate }: { revalidate: () => void }) => {
+const ItemCreate = ({ revalidate, id }: { revalidate: () => void, id: number }) => {
     const [title, setTitle] = useState<string>("");
     const [open, setOpen] = useState<boolean>(false);
     const [isLoading, setLoading] = useState<boolean>(false);
@@ -16,7 +17,7 @@ const ItemCreate = ({ revalidate }: { revalidate: () => void }) => {
         e.preventDefault();
         setLoading(true);
 
-        createNote(title)
+        addChecklistItem(id, title)
             .then(() => { revalidate(); handleClose() })
             .catch(err => alert(err.message))
             .finally(() => setLoading(false))
@@ -24,9 +25,9 @@ const ItemCreate = ({ revalidate }: { revalidate: () => void }) => {
 
     return (
         <>
-            <Button onClick={() => setOpen(true)} variant="filled" size="sm" color="blue">
-                +
-            </Button>
+            <IconButton onClick={() => setOpen(true)} variant="filled" size="sm" color="blue">
+                <FaRegPlusSquare className="w-4 h-4"/>
+            </IconButton>
             <Dialog open={open} handler={handleClose}>
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>Create New Item Checklist.</DialogHeader>

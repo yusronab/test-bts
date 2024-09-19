@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { listNote } from "../utils/service";
 import { Card, CardBody, Typography, CardFooter } from "@material-tailwind/react";
 import NoteCreate from "../components/NoteCreate";
-
+import ItemCreate from "../components/ItemCreate";
 import DeleteNote from "../components/DeleteNote";
 
 const Home = () => {
@@ -11,6 +11,8 @@ const Home = () => {
     const fetchNotes = async () => {
         const response = await listNote();
         const result = response?.data;
+
+        console.log(result.data)
 
         if (result.statusCode === 2100) {
             setNotes(result.data);
@@ -33,18 +35,19 @@ const Home = () => {
                     notes.map((note: any, i) => (
                         <Card key={i}>
                             <CardBody>
-                                <Typography variant="h5" color="blue-gray" className="mb-2">
+                                <Typography variant="h5" color="blue-gray">
                                     {note.name}
                                 </Typography>
-                                <Typography>
-                                    The place is close to Barceloneta Beach and bus stop just 2 min by
-                                    walk and near to &quot;Naviglio&quot; where you can enjoy the main
-                                    night life in Barcelona.
-                                </Typography>
+                                <Typography className="my-2">Checklist item:</Typography>
+                                {note.items !== null && note.items.map((item: any, j: number) => (
+                                    <Typography key={j}>
+                                        {j+1}. {item.name}
+                                    </Typography>
+                                ))}
                             </CardBody>
-                            <CardFooter className="pt-0">
+                            <CardFooter className="mt-auto flex gap-4">
                                 <DeleteNote revalidate={fetchNotes} note={note} />
-                                {/* <ItemCreate revalidate={fetchNotes} /> */}
+                                <ItemCreate revalidate={fetchNotes} id={note.id} />
                             </CardFooter>
                         </Card>
                     ))

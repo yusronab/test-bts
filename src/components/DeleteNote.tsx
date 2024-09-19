@@ -1,4 +1,4 @@
-import { Button, Typography, Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react';
+import { Button, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, IconButton } from '@material-tailwind/react';
 import { useState } from 'react';
 import { deleteNote } from '../utils/service';
 import { FaTrash } from 'react-icons/fa';
@@ -20,9 +20,9 @@ const DeleteNote: React.FC<{ note: any, revalidate: () => void }> = ({ note, rev
 
     return (
         <>
-            <Button variant="filled" onClick={() => setOpen(true)} color="red">
+            <IconButton variant="filled" size="sm" onClick={() => setOpen(true)} color="red">
                 <FaTrash className="w-4 h-4" />
-            </Button>
+            </IconButton>
             <Dialog open={open} handler={() => setOpen(false)}>
                 <DialogHeader>Delete {note.name}</DialogHeader>
                 <DialogBody className="flex flex-col gap-4">
