@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { listNote } from "../utils/service";
+import { listNote, updateStatus } from "../utils/service";
 import { Card, CardBody, Typography, CardFooter } from "@material-tailwind/react";
 import NoteCreate from "../components/NoteCreate";
 import ItemCreate from "../components/ItemCreate";
 import DeleteNote from "../components/DeleteNote";
 import ItemDelete from "../components/ItemDelete";
+import ItemUpdate from "../components/ItemUpdate";
 
 const Home = () => {
     const [notes, setNotes] = useState([]);
+    const [loadingNoteId, setLoadingNoteId] = useState<number | null>(null);
 
     const fetchNotes = async () => {
         const response = await listNote();
@@ -24,6 +26,18 @@ const Home = () => {
         fetchNotes();
     }, [])
 
+    const handleCheckboxChange = async (noteId: number, itemId: number) => {
+        setLoadingNoteId(noteId);
+        try {
+            await updateStatus(noteId, itemId);
+            fetchNotes();
+        } catch (error) {
+            console.error('Error updating status:', error);
+        } finally {
+            setLoadingNoteId(null);
+        }
+    }
+
     return (
         <div>
             <div className="flex gap-8">
@@ -34,18 +48,33 @@ const Home = () => {
                     <div>No notes available</div>
                 ) : (
                     notes.map((note: any, i) => (
-                        <Card key={i}>
+                        <Card key={i} className={loadingNoteId === note.id ? 'opacity-50 pointer-events-none' : ''}>
+                            {loadingNoteId === note.id && <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
+                                <span>Loading...</span>
+                            </div>}
                             <CardBody>
                                 <Typography variant="h5" color="blue-gray">
                                     {note.name}
                                 </Typography>
                                 <Typography className="my-2">Checklist item:</Typography>
                                 {note.items !== null && note.items.map((item: any, j: number) => (
-                                    <div className="flex justify-between items-center" key={j}>
-                                        <Typography key={j}>
-                                            {j + 1}. {item.name}
-                                        </Typography>
-                                        <div>
+                                    <div className="flex justify-between items-center flex-1 mb-4" key={j}>
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={item.itemCompletionStatus}
+                                                onChange={() => handleCheckboxChange(note.id, item.id)}
+                                                disabled={loadingNoteId === note.id}
+                                            />
+                                            <Typography>{item.name}</Typography>
+                                        </div>
+                                        <div className="w-1/3 text-end">
+                                            <ItemUpdate
+                                                id={note.id}
+                                                itemId={item.id}
+                                                name={item.name}
+                                                revalidate={fetchNotes}
+                                            />
                                             <ItemDelete
                                                 itemId={item.id}
                                                 noteId={note.id}

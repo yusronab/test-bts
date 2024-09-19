@@ -86,3 +86,31 @@ export const deleteItem = async (id: number, itemId: number) => {
 
     return result
 }
+
+export const updateStatus = async (id: number, itemId: number) => {
+    const token = isAuthorize();
+
+    if (!token) return;
+
+    const result = await axios.put(BASE_URL + '/checklist/' + id + '/item/' + itemId, {}, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return result
+}
+
+export const renameItem = async (id: number, itemId: number, name: string) => {
+    const token = isAuthorize();
+
+    if (!token) return;
+
+    const result = await axios.put(BASE_URL + '/checklist/' + id + '/item/rename/' + itemId, { itemName: name }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return result
+}
